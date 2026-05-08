@@ -47,9 +47,11 @@ To set up this module in your Odoo environment, follow these steps:
 
 ## 3. Usage
 
-Once installed, navigate to the **Car Sharing** menu:
+Once installed, navigate to the **Car Sharing** menu. There you'll see the following reservation overview:
+![Reservation Overview](car_sharing/static/usage/reservation_overview.png)
 
 * **Create a Reservation:** Select a vehicle, driver, and desired timeframe.
+![Reservation View](car_sharing/static/usage/reservation_view.png)
 * **Validation:** If you select a timeframe that overlaps with an existing booking for the same car, the system will trigger a `ValidationError`.
 * **Passenger Management:** Add passengers via the `Passenger` field. The system will automatically update the `Available Seats` field.
 * **Safety Checks:** The system will block any attempt to save a reservation where the driver is also listed as a passenger or if the total headcount exceeds the vehicle's capacity.
