@@ -9,7 +9,8 @@ class CarReservation(models.Model):
 
     location_from = fields.Char(string="Startort", required=True)
     location_to = fields.Char(string="Zielort")
-    departure_time = fields.Datetime(string="Departure", required=True)
+    departure_time = fields.Datetime(string="Departure Date", required=True)
+    return_date = fields.Datetime(string="Return Date", required=True)
 
     tot_seats = fields.Integer(
         string="Seats",
@@ -34,6 +35,14 @@ class CarReservation(models.Model):
             if record.departure_time < fields.Datetime.now():
                 raise ValidationError("Departure time cannot lie in the past.")
 
+    @api.constrains("departure_time", "return_date")
+    def _validate_return_date(self):
+        for record in self:
+            if record.return_date <= record.departure_time:
+                raise ValidationError(
+                    "The car's return date cannot lie before the departure time"
+                )
+
     @api.constrains("driver_id", "passenger_ids")
     def _check_driver_in_passenger(self):
         for record in self:
@@ -57,8 +66,26 @@ class CarReservation(models.Model):
                     f"Including the driver all {tot_passengers} seats are occupied."
                 )
 
+    @api.constrains("departure_time", "return_date", "vehicle_id")
+    def _prevent_double_reservation(self):
+        for record in self:
+            if record.departure_time and record.return_date:
+                domain = [
+                    ("vehicle_id", "=", record.vehicle_id.id),
+                    ("id", "!=", record.id),
+                    ("return_date", ">", record.departure_time),
+                    ("departure_time", "<", record.return_date),
+                ]
+                search_results = self.env["car.reservation"].search(domain)
+
+                if search_results:
+                    raise ValidationError(
+                        f"This car {record.vehicle_id.name} is already reserved:\n"
+                        f"from {search_results[0].departure_time} until {search_results[0].return_date}\n"
+                    )
+
     @api.depends("passenger_ids", "tot_seats", "driver_id")
     def _compute_available_seats(self):
         for record in self:
-            tot_people = len(record.passenger_ids) + len(record.driver_id)
+            tot_people = len(record.passenger_ids) + 1
             record.available_seats = record.tot_seats - tot_people

@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <list string="Reservierungen">
                 <field name="departure_time"/>
+                <field name="return_date"/>
                 <field name="location_from"/>
                 <field name="location_to"/>
                 <field name="vehicle_id"/>
@@ -26,6 +27,7 @@
                     <group>
                         <group string="Reise-Details">
                             <field name="departure_time"/>
+                            <field name="return_date"/>
                             <field name="location_from"/>
                             <field name="location_to"/>
                         </group>
