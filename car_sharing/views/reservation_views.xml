@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. Die Listenansicht -->
+    <record id="view_car_reservation_list" model="ir.ui.view">
+        <field name="name">car.reservation.list</field>
+        <field name="model">car.reservation</field>
+        <field name="arch" type="xml">
+            <list string="Reservierungen">
+                <field name="departure_time"/>
+                <field name="location_from"/>
+                <field name="location_to"/>
+                <field name="vehicle_id"/>
+                <field name="driver_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- 2. Die Formularansicht (Form View) -->
+    <record id="view_car_reservation_form" model="ir.ui.view">
+        <field name="name">car.reservation.form</field>
+        <field name="model">car.reservation</field>
+        <field name="arch" type="xml">
+            <form string="Reservierung">
+                <sheet>
+                    <group>
+                        <group string="Reise-Details">
+                            <field name="departure_time"/>
+                            <field name="location_from"/>
+                            <field name="location_to"/>
+                        </group>
+                        <group string="Fahrzeug &amp; Fahrer">
+                            <field name="vehicle_id"/>
+                            <field name="tot_seats"/>
+                            <field name="available_seats" widget="integer"/>
+                            <field name="driver_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Mitfahrer" name="passengers">
+                            <field name="passenger_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- 3. Die Action -->
+    <record id="action_car_reservation" model="ir.actions.act_window">
+        <field name="name">Reservierungen</field>
+        <field name="res_model">car.reservation</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Erstelle die erste Reservierung!
+            </p>
+        </field>
+    </record>
+
+    <!-- 4. Die Menüstruktur -->
+    <!-- Hauptmenü oben -->
+    <menuitem id="menu_car_sharing_root" 
+              name="Car Sharing" 
+              web_icon="base,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Untermenü links -->
+    <menuitem id="menu_car_reservation" 
+              name="Reservierungen" 
+              parent="menu_car_sharing_root" 
+              action="action_car_reservation" 
+              sequence="10"/>
+
+</odoo>
